@@ -1,0 +1,1881 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="今日人类状态分析器是一个轻松有趣的互动网页，提供状态扫描、趣味结论、抽签和彩蛋玩法。" />
+  <meta name="keywords" content="今日人类状态分析器,互动网页,趣味测试,状态扫描,网页小游戏" />
+  <meta name="robots" content="index,follow" />
+  <meta name="author" content="rlu666" />
+  <meta name="theme-color" content="#0b1020" />
+  <link rel="canonical" href="https://rlu666.github.io/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="今日人类状态分析器" />
+  <meta property="og:title" content="今日人类状态分析器" />
+  <meta property="og:description" content="打开网页即可体验状态扫描、趣味结论、抽签和彩蛋玩法。" />
+  <meta property="og:url" content="https://rlu666.github.io/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="今日人类状态分析器" />
+  <meta name="twitter:description" content="一个轻松有趣的互动网页，支持状态扫描、抽签和小游戏。" />
+  <title>今日人类状态分析器</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --bg2: #111b3a;
+      --panel: rgba(10, 16, 36, 0.76);
+      --panel-strong: rgba(8, 12, 24, 0.9);
+      --text: #eff4ff;
+      --muted: #9fb0d6;
+      --accent: #7cf7d4;
+      --accent-2: #ffd166;
+      --accent-3: #ff6b9d;
+      --line: rgba(255, 255, 255, 0.12);
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --radius: 28px;
+      --glow: 0 0 0 1px rgba(255,255,255,0.08), 0 0 40px rgba(124, 247, 212, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255, 109, 157, 0.18), transparent 22%),
+        radial-gradient(circle at 80% 10%, rgba(124, 247, 212, 0.16), transparent 18%),
+        radial-gradient(circle at 70% 85%, rgba(255, 209, 102, 0.14), transparent 20%),
+        linear-gradient(135deg, var(--bg), var(--bg2));
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent 90%);
+      opacity: 0.5;
+    }
+
+    .wrap {
+      position: relative;
+      width: min(1200px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 36px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(8, 12, 24, 0.45);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #0a1022;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      background: linear-gradient(135deg, #7cf7d4, #ffd166 55%, #ff6b9d);
+      box-shadow: 0 12px 30px rgba(255, 209, 102, 0.25);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1rem, 2vw, 1.1rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pill {
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+      margin-top: 18px;
+      align-items: stretch;
+    }
+
+    .panel {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow), var(--glow);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+    }
+
+    .panel::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -70% -10%;
+      height: 180px;
+      background: radial-gradient(circle, rgba(124, 247, 212, 0.16), transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-main {
+      padding: 34px;
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      font-size: 0.86rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 18px rgba(124, 247, 212, 0.9);
+    }
+
+    .title {
+      margin: 12px 0 0;
+      font-size: clamp(2.8rem, 7vw, 5.6rem);
+      line-height: 0.92;
+      letter-spacing: -0.08em;
+      text-wrap: balance;
+    }
+
+    .title span {
+      display: inline-block;
+      background: linear-gradient(90deg, #fff, #7cf7d4 35%, #ffd166 70%, #ff6b9d);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 12px 24px rgba(124, 247, 212, 0.1));
+    }
+
+    .subtitle {
+      max-width: 58ch;
+      margin: 18px 0 0;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .meter-card {
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(4, 8, 18, 0.42);
+      margin-top: 14px;
+    }
+
+    .meter-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .bar {
+      position: relative;
+      height: 18px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .bar > i {
+      display: block;
+      width: 16%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #7cf7d4, #ffd166 55%, #ff6b9d);
+      transition: width 700ms cubic-bezier(.2,.8,.2,1);
+      box-shadow: 0 0 24px rgba(124, 247, 212, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bar > i::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+      transform: translateX(-120%);
+      animation: sweep 2.2s linear infinite;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      min-height: 108px;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-bottom: 10px;
+    }
+
+    .stat .value {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.06em;
+    }
+
+    .stat .hint {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .btn {
+      position: relative;
+      padding: 14px 18px;
+      border-radius: 16px;
+      color: #08101f;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, #7cf7d4, #ffd166 58%, #ff6b9d);
+      box-shadow: 0 14px 30px rgba(255, 209, 102, 0.15);
+      transform: translateY(0);
+      transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 34px rgba(255, 209, 102, 0.22);
+      filter: saturate(1.08);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn.secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: none;
+    }
+
+    .btn.ghost {
+      color: var(--muted);
+      background: transparent;
+      border: 1px dashed rgba(255,255,255,0.18);
+    }
+
+    .side {
+      display: grid;
+      gap: 18px;
+    }
+
+    .terminal {
+      min-height: 320px;
+      padding: 22px;
+      background: var(--panel-strong);
+    }
+
+    .terminal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      gap: 12px;
+    }
+
+    .lights {
+      display: flex;
+      gap: 8px;
+    }
+
+    .lights i {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .lights i:nth-child(1) { background: #ff6b6b; }
+    .lights i:nth-child(2) { background: #ffd166; }
+    .lights i:nth-child(3) { background: #7cf7d4; }
+
+    .terminal-title {
+      color: var(--muted);
+      font-size: 0.86rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .terminal-screen {
+      min-height: 230px;
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), transparent 30%),
+        rgba(1, 5, 13, 0.75);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 18px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: #d5e1ff;
+      overflow: auto;
+      position: relative;
+    }
+
+    .terminal-screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(transparent 50%, rgba(255,255,255,0.02) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.35;
+    }
+
+    .line {
+      opacity: 0.2;
+      transform: translateY(6px);
+      animation: reveal 360ms ease forwards;
+    }
+
+    .line + .line { margin-top: 2px; }
+
+    .line strong {
+      color: #7cf7d4;
+      font-weight: 700;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      font-size: 0.88rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .oracle {
+      padding: 22px;
+      min-height: 250px;
+    }
+
+    .oracle h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+    }
+
+    .oracle p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .oracle .big {
+      margin-top: 18px;
+      font-size: clamp(1.5rem, 3.5vw, 2.3rem);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -0.06em;
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .mini {
+      min-height: 82px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.045);
+    }
+
+    .mini span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+    }
+
+    .mini b {
+      font-size: 1.15rem;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .floaters {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 5;
+    }
+
+    .floater {
+      position: absolute;
+      font-size: 1.2rem;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.2);
+      animation: drift var(--dur, 10s) linear forwards;
+      transform: translate3d(0,0,0);
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .flash {
+      animation: flash 420ms ease;
+    }
+
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .glitch::before {
+      transform: translate(2px, 0);
+      color: #7cf7d4;
+      clip-path: inset(0 0 55% 0);
+      animation: glitch1 2.8s infinite linear alternate-reverse;
+    }
+
+    .glitch::after {
+      transform: translate(-2px, 0);
+      color: #ff6b9d;
+      clip-path: inset(55% 0 0 0);
+      animation: glitch2 2.4s infinite linear alternate-reverse;
+    }
+
+    .arcade {
+      margin-top: 18px;
+      padding: 26px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .arcade-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .arcade-title {
+      margin: 10px 0 0;
+      font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+      letter-spacing: -0.05em;
+    }
+
+    .arcade-subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 62ch;
+      line-height: 1.7;
+    }
+
+    .arcade-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .arcade-meta .pill {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .arcade-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .game-card {
+      min-height: 320px;
+      padding: 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), transparent 28%),
+        rgba(255,255,255,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -40% auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124, 247, 212, 0.12), transparent 68%);
+      pointer-events: none;
+    }
+
+    .game-top {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .game-kicker {
+      color: var(--accent);
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .game-card h3 {
+      margin: 0;
+      font-size: 1.4rem;
+      letter-spacing: -0.04em;
+    }
+
+    .game-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .fortune-result {
+      min-height: 96px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0, 0, 0, 0.18);
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .fortune-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 34px;
+    }
+
+    .fortune-tags .chip {
+      font-size: 0.8rem;
+      padding: 8px 10px;
+    }
+
+    .game-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .scoreboard div {
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .scoreboard span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+    }
+
+    .scoreboard strong {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .click-stage {
+      position: relative;
+      min-height: 170px;
+      border-radius: 22px;
+      border: 1px dashed rgba(255,255,255,0.18);
+      background:
+        radial-gradient(circle at 50% 30%, rgba(124, 247, 212, 0.12), transparent 28%),
+        rgba(0, 0, 0, 0.18);
+      overflow: hidden;
+    }
+
+    .click-stage .target-btn {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 138px;
+      z-index: 2;
+    }
+
+    .click-stage .target-btn[data-floating="1"] {
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 14px 30px rgba(0,0,0,0.2);
+    }
+
+    .choice-question {
+      min-height: 70px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0, 0, 0, 0.18);
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .choice-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .choice-result {
+      min-height: 104px;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0, 0, 0, 0.18);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .arcade-flag {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      color: #08101f;
+      background: linear-gradient(135deg, #7cf7d4, #ffd166);
+      box-shadow: 0 10px 22px rgba(124, 247, 212, 0.2);
+    }
+
+    @keyframes sweep {
+      from { transform: translateX(-120%); }
+      to { transform: translateX(120%); }
+    }
+
+    @keyframes reveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes drift {
+      from {
+        transform: translate3d(0, 0, 0) rotate(-2deg);
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      to {
+        transform: translate3d(var(--x, 140px), -120vh, 0) rotate(12deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes flash {
+      0%, 100% { filter: brightness(1); }
+      45% { filter: brightness(1.5) saturate(1.2); }
+    }
+
+    @keyframes glitch1 {
+      0% { clip-path: inset(0 0 58% 0); }
+      20% { clip-path: inset(8% 0 47% 0); }
+      40% { clip-path: inset(0 0 68% 0); }
+      60% { clip-path: inset(16% 0 36% 0); }
+      80% { clip-path: inset(4% 0 55% 0); }
+      100% { clip-path: inset(0 0 62% 0); }
+    }
+
+    @keyframes glitch2 {
+      0% { clip-path: inset(56% 0 0 0); }
+      20% { clip-path: inset(47% 0 10% 0); }
+      40% { clip-path: inset(68% 0 0 0); }
+      60% { clip-path: inset(38% 0 16% 0); }
+      80% { clip-path: inset(55% 0 4% 0); }
+      100% { clip-path: inset(62% 0 0 0); }
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-main {
+        min-height: auto;
+      }
+
+      .arcade-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .wrap {
+        width: min(100vw - 20px, 1200px);
+        padding-top: 16px;
+      }
+
+      .topbar {
+        border-radius: 24px;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      .pill {
+        width: 100%;
+        text-align: center;
+      }
+
+      .hero-main,
+      .terminal,
+      .oracle {
+        padding: 18px;
+      }
+
+      .stats,
+      .mini-grid,
+      .scoreboard,
+      .choice-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .title {
+        font-size: clamp(2.4rem, 16vw, 4.8rem);
+      }
+
+      .arcade {
+        padding: 18px;
+      }
+
+      .arcade-head {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="floaters" id="floaters" aria-hidden="true"></div>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">H</div>
+        <div>
+          <h1>今日人类状态分析器</h1>
+          <p>一款认真胡闹的网页，专门负责把正常事情做得很离谱</p>
+        </div>
+      </div>
+      <div class="pill" id="timePill">系统时间加载中...</div>
+    </header>
+
+    <main class="hero">
+      <section class="panel hero-main">
+        <div>
+          <div class="eyebrow">
+            <span class="dot"></span>
+            <span>human behavior lab // parody mode</span>
+          </div>
+          <h2 class="title">
+            <span class="glitch" data-text="正在扫描你的气质">正在扫描你的气质</span>
+          </h2>
+          <p class="subtitle">
+            本页面不会真的识别你，但会很努力地装作自己很懂。现在除了假扫描，还能抽签、冲手速和做反转问答。适合发给朋友，看看谁先认真。
+          </p>
+
+          <div class="meter-card">
+            <div class="meter-head">
+              <span>摸鱼浓度</span>
+              <strong id="meterText">16%</strong>
+            </div>
+            <div class="bar"><i id="meterBar"></i></div>
+            <div class="chip-row">
+              <div class="chip">已检测到：轻微装忙</div>
+              <div class="chip">风险等级：可爱型</div>
+              <div class="chip">建议：继续假装在看数据</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="stats">
+            <article class="stat">
+              <div class="label">今日战斗力</div>
+              <div class="value" id="powerValue">88</div>
+              <div class="hint">数据来源：我刚编的，但看起来挺像真的。</div>
+            </article>
+            <article class="stat">
+              <div class="label">认真指数</div>
+              <div class="value" id="seriousValue">47</div>
+              <div class="hint">过高会导致表情失去弹性。</div>
+            </article>
+            <article class="stat">
+              <div class="label">离谱程度</div>
+              <div class="value" id="absurdValue">99</div>
+              <div class="hint">已达到可以直接入驻热搜的水平。</div>
+            </article>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="scanBtn">开始假扫描</button>
+            <button class="btn secondary" id="complimentBtn">生成夸夸</button>
+            <button class="btn secondary" id="modeBtn">切换恶搞模式</button>
+            <button class="btn ghost" id="resetBtn">重置气氛</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="panel terminal">
+          <div class="terminal-head">
+            <div class="lights" aria-hidden="true">
+              <i></i><i></i><i></i>
+            </div>
+            <div class="terminal-title">/dev/human-scan</div>
+            <div class="pill" id="modePill">模式：夸张版</div>
+          </div>
+          <div class="terminal-screen" id="terminal"></div>
+        </section>
+
+        <section class="panel oracle">
+          <h2>今日结论</h2>
+          <p>系统通过伪造的算法模型，得出以下结果。此结果可以信，也可以转发给朋友，然后一起笑一下。</p>
+          <div class="big" id="fortune">你今天看起来很忙，其实忙着可爱。</div>
+          <div class="mini-grid">
+            <div class="mini">
+              <span>社交状态</span>
+              <b id="socialState">半在线</b>
+            </div>
+            <div class="mini">
+              <span>当前标签</span>
+              <b id="tagState">人类优质样本</b>
+            </div>
+            <div class="mini">
+              <span>建议行动</span>
+              <b id="actionState">去喝口水，顺便夸自己两句</b>
+            </div>
+            <div class="mini">
+              <span>隐藏成就</span>
+              <b id="achievementState">已达成“看起来很会”</b>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <section class="panel arcade" aria-label="整活游乐场">
+      <div class="arcade-flag">bonus stage</div>
+      <div class="arcade-head">
+        <div>
+          <div class="eyebrow">
+            <span class="dot"></span>
+            <span>multiplay mode // 离谱街机厅</span>
+          </div>
+          <h2 class="arcade-title">整活游乐场</h2>
+          <p class="arcade-subtitle">这里不是单一按钮页，而是一个能连续玩三种离谱小游戏的街机厅。每玩一次，页面就会更像在认真胡闹。</p>
+        </div>
+        <div class="arcade-meta">
+          <div class="pill">已解锁玩法 <b id="arcadePlayed">0</b>/3</div>
+          <div class="pill">最佳连击 <b id="bestCombo">0</b></div>
+          <div class="pill">离谱币 <b id="chaosCoins">0</b></div>
+        </div>
+      </div>
+
+      <div class="arcade-grid">
+        <article class="game-card">
+          <div class="game-top">
+            <span class="game-kicker">玩法 01</span>
+            <h3>离谱抽签</h3>
+          </div>
+          <p>每次抽到的签都会改写今天的剧情，顺便给你的状态加一点戏。</p>
+          <div class="fortune-result" id="fortuneGameText">点击抽签，系统会给你一张带梗的命运卡。</div>
+          <div class="fortune-tags" id="fortuneTags"></div>
+          <div class="game-actions">
+            <button class="btn" id="drawFortuneBtn">抽一张</button>
+            <button class="btn secondary" id="rerollFortuneBtn">再来一次</button>
+          </div>
+        </article>
+
+        <article class="game-card">
+          <div class="game-top">
+            <span class="game-kicker">玩法 02</span>
+            <h3>手速挑战</h3>
+          </div>
+          <div class="scoreboard">
+            <div>
+              <span>得分</span>
+              <strong id="clickScore">0</strong>
+            </div>
+            <div>
+              <span>连击</span>
+              <strong id="clickCombo">0</strong>
+            </div>
+            <div>
+              <span>倒计时</span>
+              <strong id="clickTime">10</strong>
+            </div>
+          </div>
+          <p id="clickHint">按开始后，疯狂点中间按钮。按钮会乱跑，别让它看扁你。</p>
+          <div class="click-stage" id="clickStage">
+            <button class="btn" id="startClickBtn">开始挑战</button>
+            <button class="btn secondary target-btn" id="clickTargetBtn" disabled>点我拿分</button>
+          </div>
+          <div class="game-actions">
+            <button class="btn secondary" id="endClickBtn">提前结算</button>
+          </div>
+        </article>
+
+        <article class="game-card">
+          <div class="game-top">
+            <span class="game-kicker">玩法 03</span>
+            <h3>反转问答</h3>
+          </div>
+          <p>每题只有三种回答，但系统总能把你的选择解释得很离谱。</p>
+          <div class="choice-question" id="choicePrompt">今天开工前，你先选择哪种心态？</div>
+          <div class="choice-buttons">
+            <button class="btn secondary" data-choice="0">先摆姿势</button>
+            <button class="btn secondary" data-choice="1">先装认真</button>
+            <button class="btn secondary" data-choice="2">先喝口水</button>
+          </div>
+          <div class="choice-result" id="choiceResult">回答一次，系统就会胡编一次。</div>
+          <div class="game-actions">
+            <button class="btn ghost" id="nextChoiceBtn">换一题</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="footer-note">提示：`Enter` 扫描，`C` 夸夸，`M` 切模式，`D` 抽签，`S` 开手速挑战，`1/2/3` 回答问答。</div>
+  </div>
+
+  <script>
+    const state = {
+      modeIndex: 0,
+      scanRunning: false,
+      meter: 16,
+      power: 88,
+      serious: 47,
+      absurd: 99,
+      timer: null,
+      modeThemes: [
+        {
+          name: "夸张版",
+          bg: ["#0b1020", "#111b3a"],
+          accent: "#7cf7d4",
+          accent2: "#ffd166",
+          accent3: "#ff6b9d",
+          fortune: "你今天看起来很忙，其实忙着可爱。",
+          social: "半在线",
+          tag: "人类优质样本",
+          action: "去喝口水，顺便夸自己两句",
+          achievement: "已达成“看起来很会”"
+        },
+        {
+          name: "审判版",
+          bg: ["#140b1b", "#2f1022"],
+          accent: "#ffd166",
+          accent2: "#ff6b9d",
+          accent3: "#7cf7d4",
+          fortune: "系统发现你并不懒，只是把能量都拿去发呆了。",
+          social: "隐身但已读",
+          tag: "摸鱼学教授",
+          action: "打开一个新标签页，然后假装思考",
+          achievement: "摸鱼许可证已年检通过"
+        },
+        {
+          name: "赛博版",
+          bg: ["#07131b", "#0f2538"],
+          accent: "#78e8ff",
+          accent2: "#8cff9c",
+          accent3: "#f8ff7a",
+          fortune: "你的气场像刚升级完系统，顺手把烦恼也清掉了。",
+          social: "网络可达，心情离线",
+          tag: "未来感拖延症",
+          action: "给今天定一个离谱但能完成的小目标",
+          achievement: "已解锁‘嘴上说不行，实际很行’"
+        }
+      ],
+      compliments: [
+        "你像一条有自我主张的锦鲤，运气和幽默感都在发光。",
+        "你的脑回路很有创意，连系统都想给你加个表情包权限。",
+        "你不是在摆烂，你是在用艺术的方式保存能量。",
+        "你看起来普通，实际上是那种会在朋友圈突然赢一次的人。",
+        "你的气质像刚从漫画里走出来，还顺手带了点喜感。"
+      ],
+      scanLines: [
+        "初始化外观识别模块...",
+        "检测到：发型状态稳定，情绪波动可控。",
+        "扫描到：你在努力装作不忙，但其实很会。",
+        "结果生成中：正在对‘离谱’进行微调。",
+        "结论：此人适合拥有一整天的好运。"
+      ],
+      chaosCoins: 0,
+      bestCombo: 0,
+      fortuneCount: 0,
+      arcadeUnlocked: {
+        fortune: false,
+        click: false,
+        choice: false
+      },
+      clickGame: {
+        active: false,
+        score: 0,
+        combo: 0,
+        timeLeft: 10,
+        tickId: null,
+        moveId: null,
+        lastHitAt: 0
+      },
+      choiceIndex: 0,
+      choiceBusy: false
+    };
+
+    const fortuneDeck = [
+      {
+        title: "SSR·主角光环",
+        text: "你今天很适合把普通事情做成节目效果，别人以为你在整活，其实你在赢。",
+        tags: ["好运+2", "戏份拉满", "适合拍照"],
+        meter: 12,
+        power: 4,
+        serious: -2,
+        absurd: 5,
+        coins: 3,
+        icon: "✨"
+      },
+      {
+        title: "R·摸鱼专家",
+        text: "你的效率看起来不高，实际上是在保存关键时刻的爆发力。",
+        tags: ["摸鱼合法", "能量存档", "稳中带皮"],
+        meter: 8,
+        power: 2,
+        serious: -1,
+        absurd: 4,
+        coins: 2,
+        icon: "🐟"
+      },
+      {
+        title: "SR·嘴强王者",
+        text: "你说话像在开玩笑，但最后往往真能成，属于离谱里最靠谱的那类。",
+        tags: ["嘴上赢", "实际更赢", "适合输出"],
+        meter: 9,
+        power: 5,
+        serious: -1,
+        absurd: 3,
+        coins: 3,
+        icon: "🗣️"
+      },
+      {
+        title: "N·安静赢家",
+        text: "你不抢戏，但戏会自己找上你。今天的运气会自己来敲门。",
+        tags: ["低调发光", "路过即胜利", "自带剧情"],
+        meter: 7,
+        power: 3,
+        serious: 1,
+        absurd: 2,
+        coins: 2,
+        icon: "🚪"
+      },
+      {
+        title: "UR·离谱幸运",
+        text: "今天有小概率遇到神展开，记得准备表情包，免得来不及截图。",
+        tags: ["神展开", "截图预备", "表情包库存"],
+        meter: 14,
+        power: 2,
+        serious: -3,
+        absurd: 7,
+        coins: 4,
+        icon: "🌀"
+      },
+      {
+        title: "SR·电量回升",
+        text: "请喝水、伸懒腰、再顺手赢一下。你现在的状态很适合重新启动。",
+        tags: ["补给中", "恢复中", "马上满电"],
+        meter: 10,
+        power: 4,
+        serious: 0,
+        absurd: 3,
+        coins: 2,
+        icon: "🔋"
+      },
+      {
+        title: "R·表面冷静",
+        text: "你看上去稳，其实心里已经在安排彩蛋。别人看到的是平静，你看到的是节奏。",
+        tags: ["表面平静", "内心有戏", "节奏大师"],
+        meter: 6,
+        power: 3,
+        serious: 2,
+        absurd: 2,
+        coins: 2,
+        icon: "🧊"
+      },
+      {
+        title: "SSR·全场最佳",
+        text: "如果人生是综艺，你是那个会被保送到决赛的人。今天建议直接放大招。",
+        tags: ["全场最佳", "天选之子", "大招预热"],
+        meter: 15,
+        power: 5,
+        serious: -2,
+        absurd: 6,
+        coins: 4,
+        icon: "🏆"
+      }
+    ];
+
+    const choiceDeck = [
+      {
+        prompt: "领导突然问你：现在方便吗？",
+        options: ["方便但不多", "非常方便", "我在努力方便"],
+        answers: [
+          { text: "这个回答很会留余地，属于职场弹性大师。", meter: 5, power: 2, serious: 1, absurd: 1, coins: 1 },
+          { text: "回答过于顺滑，系统怀疑你提前排练过。", meter: 7, power: 3, serious: 0, absurd: 3, coins: 2 },
+          { text: "‘努力方便’四个字很妙，既礼貌又非常离谱。", meter: 6, power: 2, serious: -1, absurd: 4, coins: 2 }
+        ]
+      },
+      {
+        prompt: "周五下午最适合干什么？",
+        options: ["把周末提前过了", "偷偷优化工作", "先喝杯冰饮"],
+        answers: [
+          { text: "周末思维提前启动，人生效率直接翻倍。", meter: 8, power: 1, serious: -1, absurd: 4, coins: 2 },
+          { text: "这叫提前布局，不叫加班。系统勉强接受。", meter: 6, power: 4, serious: 2, absurd: 2, coins: 2 },
+          { text: "冰饮一入口，今天的难度自动降级。", meter: 4, power: 2, serious: 0, absurd: 3, coins: 1 }
+        ]
+      },
+      {
+        prompt: "朋友说你看起来很忙，你怎么回？",
+        options: ["我在思考", "我在优化", "我在发呆"],
+        answers: [
+          { text: "思考派选手，明明没说很多，却很有画面感。", meter: 6, power: 3, serious: 1, absurd: 2, coins: 2 },
+          { text: "优化听起来特别专业，连摸鱼都像在做系统升级。", meter: 7, power: 2, serious: 2, absurd: 3, coins: 2 },
+          { text: "发呆也能说得这么坦荡，精神状态非常稳定。", meter: 5, power: 1, serious: -1, absurd: 4, coins: 1 }
+        ]
+      },
+      {
+        prompt: "想摸鱼时你会先做什么？",
+        options: ["打开新标签", "起身喝水", "把手机扣住"],
+        answers: [
+          { text: "新标签页一开，戏剧性和生产力同时拉满。", meter: 7, power: 1, serious: -1, absurd: 5, coins: 2 },
+          { text: "喝水很关键，毕竟人类需要定期重启一下。", meter: 5, power: 2, serious: 1, absurd: 2, coins: 1 },
+          { text: "扣住手机很像在给自己下最后通牒，效果不错。", meter: 4, power: 3, serious: 2, absurd: 2, coins: 1 }
+        ]
+      },
+      {
+        prompt: "如果今天只做一件事？",
+        options: ["把最难的先干掉", "把最小的先做完", "把自己先哄好"],
+        answers: [
+          { text: "先打最难关卡，系统判定你有点狠。", meter: 9, power: 4, serious: 1, absurd: 3, coins: 3 },
+          { text: "从小事起手，稳定派从不靠吼。", meter: 6, power: 2, serious: 2, absurd: 1, coins: 1 },
+          { text: "先把自己哄好，今天的战斗力会自动回升。", meter: 8, power: 3, serious: -1, absurd: 3, coins: 2 }
+        ]
+      },
+      {
+        prompt: "你更像哪种人类？",
+        options: ["安静发光", "热闹搞笑", "又稳又皮"],
+        answers: [
+          { text: "安静发光型，属于路过也会被记住的那类。", meter: 7, power: 2, serious: 1, absurd: 2, coins: 2 },
+          { text: "热闹搞笑型，系统建议你自带 BGM 出场。", meter: 8, power: 1, serious: -2, absurd: 5, coins: 2 },
+          { text: "又稳又皮最危险，因为别人完全看不穿你。", meter: 9, power: 3, serious: 0, absurd: 4, coins: 3 }
+        ]
+      }
+    ];
+
+    const terminal = document.getElementById('terminal');
+    const meterBar = document.getElementById('meterBar');
+    const meterText = document.getElementById('meterText');
+    const powerValue = document.getElementById('powerValue');
+    const seriousValue = document.getElementById('seriousValue');
+    const absurdValue = document.getElementById('absurdValue');
+    const fortune = document.getElementById('fortune');
+    const socialState = document.getElementById('socialState');
+    const tagState = document.getElementById('tagState');
+    const actionState = document.getElementById('actionState');
+    const achievementState = document.getElementById('achievementState');
+    const modePill = document.getElementById('modePill');
+    const timePill = document.getElementById('timePill');
+    const floaters = document.getElementById('floaters');
+    const arcadePlayed = document.getElementById('arcadePlayed');
+    const bestCombo = document.getElementById('bestCombo');
+    const chaosCoins = document.getElementById('chaosCoins');
+    const fortuneGameText = document.getElementById('fortuneGameText');
+    const fortuneTags = document.getElementById('fortuneTags');
+    const scanBtn = document.getElementById('scanBtn');
+    const complimentBtn = document.getElementById('complimentBtn');
+    const modeBtn = document.getElementById('modeBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const drawFortuneBtn = document.getElementById('drawFortuneBtn');
+    const rerollFortuneBtn = document.getElementById('rerollFortuneBtn');
+    const clickScore = document.getElementById('clickScore');
+    const clickCombo = document.getElementById('clickCombo');
+    const clickTime = document.getElementById('clickTime');
+    const clickHint = document.getElementById('clickHint');
+    const clickStage = document.getElementById('clickStage');
+    const startClickBtn = document.getElementById('startClickBtn');
+    const clickTargetBtn = document.getElementById('clickTargetBtn');
+    const endClickBtn = document.getElementById('endClickBtn');
+    const choicePrompt = document.getElementById('choicePrompt');
+    const choiceResult = document.getElementById('choiceResult');
+    const nextChoiceBtn = document.getElementById('nextChoiceBtn');
+    const choiceButtons = Array.from(document.querySelectorAll('[data-choice]'));
+
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    function setLine(html) {
+      const div = document.createElement('div');
+      div.className = 'line';
+      div.innerHTML = html;
+      terminal.appendChild(div);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    function clearTerminal() {
+      terminal.innerHTML = '';
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function setMeter(value) {
+      state.meter = Math.max(3, Math.min(100, value));
+      meterBar.style.width = state.meter + '%';
+      meterText.textContent = state.meter + '%';
+    }
+
+    function setStats(power, serious, absurd) {
+      state.power = Math.max(0, Math.min(100, power));
+      state.serious = Math.max(0, Math.min(100, serious));
+      state.absurd = Math.max(0, Math.min(100, absurd));
+      powerValue.textContent = state.power;
+      seriousValue.textContent = state.serious;
+      absurdValue.textContent = state.absurd;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const parts = new Intl.DateTimeFormat('zh-CN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(now);
+      timePill.textContent = `系统时间 ${parts}`;
+    }
+
+    function spawnFloater(text, x, y) {
+      const el = document.createElement('div');
+      el.className = 'floater';
+      el.textContent = text;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      el.style.setProperty('--x', `${(Math.random() * 220 - 110).toFixed(0)}px`);
+      el.style.setProperty('--dur', `${8 + Math.random() * 6}s`);
+      el.style.transform = `rotate(${Math.random() * 16 - 8}deg)`;
+      floaters.appendChild(el);
+      setTimeout(() => el.remove(), 14000);
+    }
+
+    function flashBody() {
+      document.body.classList.remove('flash');
+      void document.body.offsetWidth;
+      document.body.classList.add('flash');
+    }
+
+    function applyTheme(index) {
+      const theme = state.modeThemes[index];
+      document.documentElement.style.setProperty('--bg', theme.bg[0]);
+      document.documentElement.style.setProperty('--bg2', theme.bg[1]);
+      document.documentElement.style.setProperty('--accent', theme.accent);
+      document.documentElement.style.setProperty('--accent-2', theme.accent2);
+      document.documentElement.style.setProperty('--accent-3', theme.accent3);
+      modePill.textContent = `模式：${theme.name}`;
+      fortune.textContent = theme.fortune;
+      socialState.textContent = theme.social;
+      tagState.textContent = theme.tag;
+      actionState.textContent = theme.action;
+      achievementState.textContent = theme.achievement;
+      setLine(`<strong>[mode]</strong> 已切换到 ${theme.name}。系统建议继续装作很专业。`);
+      flashBody();
+    }
+
+    async function runScan() {
+      if (state.scanRunning) return;
+      state.scanRunning = true;
+      scanBtn.disabled = true;
+      scanBtn.textContent = '扫描中...';
+      clearTerminal();
+      setLine('<strong>[boot]</strong> 正在唤醒人类观察模块...');
+      await sleep(420);
+
+      const lines = [
+        pick(state.scanLines),
+        '读取到：表情管理能力 +23%',
+        '分析到：你今天至少能完成一件很厉害的小事。',
+        '校准中：将"拖延"解释为"节奏控制"。',
+        '系统提示：当前状态非常适合去喝水、伸懒腰、重新做人。'
+      ];
+
+      let meter = state.meter;
+      let power = state.power;
+      let serious = state.serious;
+      let absurd = state.absurd;
+
+      for (let i = 0; i < lines.length; i++) {
+        setLine(lines[i]);
+        meter = Math.min(100, meter + 12 + Math.floor(Math.random() * 10));
+        power = Math.min(100, power + 2 + Math.floor(Math.random() * 5));
+        serious = Math.max(12, serious - 3 + Math.floor(Math.random() * 6));
+        absurd = Math.min(100, absurd + 1 + Math.floor(Math.random() * 3));
+        setMeter(meter);
+        setStats(power, serious, absurd);
+        spawnFloater(pick(['✨', '📡', '🐟', '🤡', '🛰️']), 40 + Math.random() * window.innerWidth * 0.8, 100 + Math.random() * 260);
+        await sleep(520);
+      }
+
+      const outcome = [
+        '最终判断：你属于那种“看着就很会过日子”的人。',
+        '总结报告：离谱，但很有分寸。',
+        '官方建议：今天继续保持，别让别人看懂你。',
+      ];
+      setLine(`<strong>[result]</strong> ${pick(outcome)}`);
+      fortune.textContent = pick(state.compliments);
+      socialState.textContent = pick(['半在线', '已读未回', '优雅失联', '低调发光']);
+      tagState.textContent = pick(['人类优质样本', '摸鱼学教授', '自带喜感的狠角色', '情绪稳定器']);
+      actionState.textContent = pick(['去散个步', '喝口水再战', '给自己点个赞', '再偷懒五分钟也没关系']);
+      achievementState.textContent = pick(['已达成“像开了挂”', '已解锁“随手就很强”', '已累计好运值 +1', '已完成“今天也很行”']);
+      spawnFloater('扫描完成', window.innerWidth * 0.7, window.innerHeight * 0.82);
+      scanBtn.textContent = '再扫一次';
+      scanBtn.disabled = false;
+      state.scanRunning = false;
+    }
+
+    function complimentMe() {
+      const text = pick(state.compliments);
+      fortune.textContent = text;
+      const mood = pick([
+        '你今天的气场，像把普通日子过成了彩蛋。',
+        '系统一致认为：你很会把自己照顾得明明白白。',
+        '如果可爱有段位，你已经在超神边缘。',
+        '你是那种不需要解释，别人也会觉得很有趣的人。'
+      ]);
+      setLine(`<strong>[夸夸]</strong> ${mood}`);
+      spawnFloater('夸夸上线', 20 + Math.random() * window.innerWidth * 0.72, 120 + Math.random() * 180);
+      setMeter(state.meter + 7);
+      setStats(state.power + 3, state.serious - 2, state.absurd + 1);
+      flashBody();
+    }
+
+    function cycleMode() {
+      state.modeIndex = (state.modeIndex + 1) % state.modeThemes.length;
+      applyTheme(state.modeIndex);
+    }
+
+    function resetAll() {
+      clearTerminal();
+      setLine('<strong>[reset]</strong> 氛围已重置，离谱程度回到可控范围。');
+      setMeter(16);
+      setStats(88, 47, 99);
+      resetArcade();
+      applyTheme(state.modeIndex);
+      fortune.textContent = state.modeThemes[state.modeIndex].fortune;
+      socialState.textContent = state.modeThemes[state.modeIndex].social;
+      tagState.textContent = state.modeThemes[state.modeIndex].tag;
+      actionState.textContent = state.modeThemes[state.modeIndex].action;
+      achievementState.textContent = state.modeThemes[state.modeIndex].achievement;
+      spawnFloater('已复位', window.innerWidth * 0.62, window.innerHeight * 0.75);
+      flashBody();
+    }
+
+    function renderArcadeMeta() {
+      arcadePlayed.textContent = Object.values(state.arcadeUnlocked).filter(Boolean).length;
+      bestCombo.textContent = state.bestCombo;
+      chaosCoins.textContent = state.chaosCoins;
+    }
+
+    function renderFortuneTags(tags) {
+      fortuneTags.innerHTML = '';
+      tags.forEach((tag) => {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.textContent = tag;
+        fortuneTags.appendChild(chip);
+      });
+    }
+
+    function applyGameDelta(delta = {}) {
+      if (typeof delta.meter === 'number') {
+        setMeter(state.meter + delta.meter);
+      }
+
+      setStats(
+        state.power + (delta.power ?? 0),
+        state.serious + (delta.serious ?? 0),
+        state.absurd + (delta.absurd ?? 0)
+      );
+
+      if (typeof delta.coins === 'number') {
+        state.chaosCoins = Math.max(0, state.chaosCoins + delta.coins);
+      }
+
+      if (typeof delta.bestCombo === 'number') {
+        state.bestCombo = Math.max(state.bestCombo, delta.bestCombo);
+      }
+
+      renderArcadeMeta();
+    }
+
+    function unlockArcade(name) {
+      if (state.arcadeUnlocked[name]) return;
+      state.arcadeUnlocked[name] = true;
+      setLine(`<strong>[unlock]</strong> 已解锁 ${name} 玩法。`);
+      renderArcadeMeta();
+    }
+
+    function drawFortune() {
+      const index = Math.floor(Math.random() * fortuneDeck.length);
+      const card = fortuneDeck[index];
+
+      state.fortuneCount += 1;
+      fortuneGameText.innerHTML = `<strong>${card.title}</strong><br>${card.text}`;
+      renderFortuneTags(card.tags);
+      fortune.textContent = card.text;
+      setLine(`<strong>[抽签]</strong> ${card.title}：${card.text}`);
+      applyGameDelta(card);
+      spawnFloater(card.icon, 40 + Math.random() * window.innerWidth * 0.6, 140 + Math.random() * 200);
+      clickHint.textContent = `抽签记录：第 ${state.fortuneCount} 次。`;
+
+      if (!state.arcadeUnlocked.fortune) {
+        unlockArcade('fortune');
+      }
+    }
+
+    function updateClickHud() {
+      clickScore.textContent = state.clickGame.score;
+      clickCombo.textContent = state.clickGame.combo;
+      clickTime.textContent = state.clickGame.timeLeft;
+      bestCombo.textContent = state.bestCombo;
+    }
+
+    function positionClickTarget() {
+      const stageRect = clickStage.getBoundingClientRect();
+      const targetRect = clickTargetBtn.getBoundingClientRect();
+      const maxX = Math.max(0, stageRect.width - targetRect.width - 12);
+      const maxY = Math.max(0, stageRect.height - targetRect.height - 12);
+      const x = 6 + Math.random() * maxX;
+      const y = 6 + Math.random() * maxY;
+
+      clickTargetBtn.style.left = `${x}px`;
+      clickTargetBtn.style.top = `${y}px`;
+      clickTargetBtn.style.transform = 'none';
+      clickTargetBtn.dataset.floating = '1';
+    }
+
+    function startClickChallenge() {
+      if (state.clickGame.active) return;
+
+      clearInterval(state.clickGame.tickId);
+      clearInterval(state.clickGame.moveId);
+
+      state.clickGame.active = true;
+      state.clickGame.score = 0;
+      state.clickGame.combo = 0;
+      state.clickGame.timeLeft = 10;
+      state.clickGame.lastHitAt = 0;
+
+      startClickBtn.disabled = true;
+      startClickBtn.textContent = '挑战中';
+      endClickBtn.disabled = false;
+      clickTargetBtn.disabled = false;
+      clickTargetBtn.textContent = '点我拿分';
+      clickHint.textContent = '10 秒倒计时开始，按钮会到处躲。';
+      updateClickHud();
+      unlockArcade('click');
+
+      window.requestAnimationFrame(positionClickTarget);
+
+      state.clickGame.tickId = setInterval(() => {
+        state.clickGame.timeLeft -= 1;
+        updateClickHud();
+
+        if (state.clickGame.timeLeft <= 0) {
+          finishClickChallenge('time');
+          return;
+        }
+
+        if (state.clickGame.timeLeft <= 3) {
+          clickHint.textContent = `只剩 ${state.clickGame.timeLeft} 秒，按钮已经在喘。`;
+        }
+      }, 1000);
+
+      state.clickGame.moveId = setInterval(() => {
+        if (state.clickGame.active) {
+          positionClickTarget();
+        }
+      }, 900);
+
+      setLine('<strong>[click]</strong> 手速挑战开始。');
+    }
+
+    function finishClickChallenge(reason = 'time') {
+      if (!state.clickGame.active && reason !== 'manual') return;
+
+      clearInterval(state.clickGame.tickId);
+      clearInterval(state.clickGame.moveId);
+      state.clickGame.tickId = null;
+      state.clickGame.moveId = null;
+      state.clickGame.active = false;
+
+      const score = state.clickGame.score;
+      const combo = state.clickGame.combo;
+      state.bestCombo = Math.max(state.bestCombo, combo);
+
+      const grade = score >= 24 ? 'SSR' : score >= 16 ? 'SR' : score >= 8 ? 'R' : 'N';
+      clickHint.textContent = `结算：${grade} 级手速，得分 ${score}，最长连击 ${combo}。`;
+      setLine(`<strong>[click]</strong> ${reason === 'manual' ? '手动结算' : '时间到'}，${grade} 级手速，得分 ${score}。`);
+
+      applyGameDelta({
+        meter: Math.min(12, Math.max(2, score)),
+        power: Math.min(8, Math.floor(score / 4) + 1),
+        serious: -2,
+        absurd: Math.min(12, score),
+        coins: Math.max(1, Math.floor(score / 5) + Math.floor(combo / 3)),
+        bestCombo: combo
+      });
+
+      updateClickHud();
+      startClickBtn.disabled = false;
+      startClickBtn.textContent = '再开一局';
+      endClickBtn.disabled = true;
+      clickTargetBtn.disabled = true;
+      clickTargetBtn.removeAttribute('data-floating');
+      clickTargetBtn.style.left = '';
+      clickTargetBtn.style.top = '';
+      clickTargetBtn.style.transform = '';
+      flashBody();
+    }
+
+    function handleClickHit(event) {
+      if (!state.clickGame.active) return;
+
+      const now = performance.now();
+      const gap = now - state.clickGame.lastHitAt;
+      state.clickGame.combo = gap < 900 ? state.clickGame.combo + 1 : 1;
+      state.clickGame.lastHitAt = now;
+      state.clickGame.score += 1;
+      state.bestCombo = Math.max(state.bestCombo, state.clickGame.combo);
+
+      updateClickHud();
+      applyGameDelta({
+        meter: 1 + Math.min(2, Math.floor(state.clickGame.combo / 4)),
+        power: 1,
+        serious: -1,
+        absurd: 1 + Math.min(2, Math.floor(state.clickGame.combo / 5)),
+        coins: 1 + Math.floor(state.clickGame.combo / 5),
+        bestCombo: state.clickGame.combo
+      });
+
+      spawnFloater(`+${1 + Math.floor(state.clickGame.combo / 5)}`, event?.clientX ?? window.innerWidth * 0.5, event?.clientY ?? window.innerHeight * 0.5);
+
+      if (state.clickGame.score % 5 === 0) {
+        setLine(`<strong>[click]</strong> 连击 ${state.clickGame.combo}，按钮开始怀疑人生。`);
+        clickHint.textContent = pick([
+          '按钮已经在后悔了，继续点。',
+          '你今天的手速很像突然通电。',
+          '别停，离谱值还没到顶。'
+        ]);
+      }
+
+      if (state.clickGame.score >= 30) {
+        finishClickChallenge('clear');
+        return;
+      }
+
+      positionClickTarget();
+    }
+
+    function renderChoiceRound(nextIndex = state.choiceIndex, quiet = false) {
+      state.choiceIndex = nextIndex;
+      const round = choiceDeck[state.choiceIndex];
+
+      choicePrompt.textContent = round.prompt;
+      choiceButtons.forEach((button, index) => {
+        button.textContent = round.options[index];
+        button.disabled = state.choiceBusy;
+      });
+      nextChoiceBtn.disabled = state.choiceBusy;
+      choiceResult.textContent = quiet ? '新一题已到，直接开选。' : '回答一次，系统就会胡编一次。';
+    }
+
+    function answerChoice(choiceIndex) {
+      if (state.choiceBusy) return;
+
+      const round = choiceDeck[state.choiceIndex];
+      const answer = round.answers[choiceIndex];
+      state.choiceBusy = true;
+      choiceButtons.forEach((button) => {
+        button.disabled = true;
+      });
+      nextChoiceBtn.disabled = true;
+
+      choiceResult.textContent = answer.text;
+      fortune.textContent = answer.text;
+      setLine(`<strong>[问答]</strong> ${round.prompt} -> ${round.options[choiceIndex]}。${answer.text}`);
+      applyGameDelta({
+        meter: answer.meter,
+        power: answer.power,
+        serious: answer.serious,
+        absurd: answer.absurd,
+        coins: 1 + Math.max(0, Math.floor(answer.absurd / 3))
+      });
+      spawnFloater(pick(['✔', '🪄', '🧠', '🎲']), 60 + Math.random() * window.innerWidth * 0.5, 120 + Math.random() * 220);
+
+      if (!state.arcadeUnlocked.choice) {
+        unlockArcade('choice');
+      }
+
+      setTimeout(() => {
+        state.choiceIndex = (state.choiceIndex + 1) % choiceDeck.length;
+        state.choiceBusy = false;
+        renderChoiceRound(state.choiceIndex, true);
+      }, 680);
+    }
+
+    function skipChoiceRound() {
+      if (state.choiceBusy) return;
+
+      setLine('<strong>[问答]</strong> 你选择跳过，系统判断你在认真思考。');
+      applyGameDelta({
+        meter: 2,
+        power: 1,
+        serious: 1,
+        absurd: 2,
+        coins: 1
+      });
+      if (!state.arcadeUnlocked.choice) {
+        unlockArcade('choice');
+      }
+      state.choiceIndex = (state.choiceIndex + 1) % choiceDeck.length;
+      renderChoiceRound(state.choiceIndex, true);
+      choiceResult.textContent = '已换题，继续选吧。';
+    }
+
+    function resetArcade() {
+      clearInterval(state.clickGame.tickId);
+      clearInterval(state.clickGame.moveId);
+
+      state.chaosCoins = 0;
+      state.bestCombo = 0;
+      state.fortuneCount = 0;
+      state.arcadeUnlocked = {
+        fortune: false,
+        click: false,
+        choice: false
+      };
+      state.clickGame.active = false;
+      state.clickGame.score = 0;
+      state.clickGame.combo = 0;
+      state.clickGame.timeLeft = 10;
+      state.clickGame.tickId = null;
+      state.clickGame.moveId = null;
+      state.clickGame.lastHitAt = 0;
+      state.choiceIndex = 0;
+      state.choiceBusy = false;
+
+      fortuneGameText.textContent = '点击抽签，系统会给你一张带梗的命运卡。';
+      fortuneTags.innerHTML = '';
+      clickScore.textContent = '0';
+      clickCombo.textContent = '0';
+      clickTime.textContent = '10';
+      clickHint.textContent = '按开始后，疯狂点中间按钮。按钮会乱跑，别让它看扁你。';
+      startClickBtn.disabled = false;
+      startClickBtn.textContent = '开始挑战';
+      endClickBtn.disabled = true;
+      clickTargetBtn.disabled = true;
+      clickTargetBtn.removeAttribute('data-floating');
+      clickTargetBtn.style.left = '';
+      clickTargetBtn.style.top = '';
+      clickTargetBtn.style.transform = '';
+      renderChoiceRound(0, true);
+      renderArcadeMeta();
+    }
+
+    scanBtn.addEventListener('click', runScan);
+    complimentBtn.addEventListener('click', complimentMe);
+    modeBtn.addEventListener('click', cycleMode);
+    resetBtn.addEventListener('click', resetAll);
+    drawFortuneBtn.addEventListener('click', drawFortune);
+    rerollFortuneBtn.addEventListener('click', drawFortune);
+    startClickBtn.addEventListener('click', startClickChallenge);
+    clickTargetBtn.addEventListener('click', handleClickHit);
+    endClickBtn.addEventListener('click', () => finishClickChallenge('manual'));
+    choiceButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        answerChoice(Number(button.dataset.choice));
+      });
+    });
+    nextChoiceBtn.addEventListener('click', skipChoiceRound);
+
+    document.addEventListener('click', (e) => {
+      if (Math.random() > 0.86) {
+        spawnFloater(pick(['离谱', '好耶', '继续', '稳了', '专业']), e.clientX, e.clientY);
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') runScan();
+      if (e.key.toLowerCase() === 'c') complimentMe();
+      if (e.key.toLowerCase() === 'm') cycleMode();
+      if (e.key.toLowerCase() === 'r') resetAll();
+      if (e.key.toLowerCase() === 'd') drawFortune();
+      if (e.key.toLowerCase() === 's') startClickChallenge();
+      if (e.key === '1') answerChoice(0);
+      if (e.key === '2') answerChoice(1);
+      if (e.key === '3') answerChoice(2);
+    });
+
+    setInterval(() => {
+      updateClock();
+      if (!state.scanRunning && !state.clickGame.active && Math.random() > 0.72) {
+        const drift = Math.random() > 0.5 ? 1 : -1;
+        setMeter(state.meter + drift * (1 + Math.floor(Math.random() * 4)));
+      }
+    }, 1000);
+
+    updateClock();
+    setMeter(state.meter);
+    setStats(state.power, state.serious, state.absurd);
+    applyTheme(state.modeIndex);
+    resetArcade();
+    clearTerminal();
+    [
+      '[init] 欢迎来到今日人类状态分析器。',
+      '[tip] 这里除了扫描，还有抽签、手速挑战和反转问答。',
+      '[hint] 快捷键：Enter 扫描，C 夸夸，M 切模式，D 抽签，S 挑战，1/2/3 回答。'
+    ].forEach((line, index) => {
+      setTimeout(() => setLine(line), 180 * index);
+    });
+  </script>
+</body>
+</html>
